@@ -23,14 +23,14 @@ jobs:
 
       - name: Subir reporte HTML
         if: always()
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: reporte-html
           path: reports/reporte.html
 
       - name: Subir screenshots
         if: failure()
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: screenshots
           path: screenshots/
