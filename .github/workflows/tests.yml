@@ -10,7 +10,10 @@ jobs:
   test:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
+
+      - name: Crear carpetas necesarias
+        run: mkdir -p reports screenshots
 
       - name: Instalar dependencias
         run: pip install -r requirements.txt
