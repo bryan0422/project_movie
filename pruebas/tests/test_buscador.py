@@ -16,4 +16,4 @@ def test_abrir_detalle(page, base_url):
 
     detalle = DetallePage(page)
     expect(detalle.get_titulo()).to_be_visible()
-    expect(detalle.get_titulo()).to_have_attribute("title", "nada")
+    expect(detalle.get_titulo()).to_have_attribute("title", TITULO)
