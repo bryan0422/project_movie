@@ -1,0 +1,36 @@
+name: Pruebas E2E
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Instalar dependencias
+        run: pip install -r requirements.txt
+
+      - name: Instalar browsers
+        run: playwright install chromium
+
+      - name: Correr pruebas
+        run: pytest
+
+      - name: Subir reporte HTML
+        if: always()
+        uses: actions/upload-artifact@v3
+        with:
+          name: reporte-html
+          path: reports/reporte.html
+
+      - name: Subir screenshots
+        if: failure()
+        uses: actions/upload-artifact@v3
+        with:
+          name: screenshots
+          path: screenshots/
