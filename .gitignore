@@ -1,0 +1,11 @@
+# Virtual environment
+pruebas_peliculas/
+
+# Reportes y screenshots
+reports/
+screenshots/
+
+# Python
+__pycache__/
+*.pyc
+.pytest_cache/
