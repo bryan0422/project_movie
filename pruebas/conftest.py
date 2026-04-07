@@ -15,10 +15,12 @@ def screenshot_on_failure(page, request):
 
 @pytest.fixture(scope="session")
 def browser_type_launch_args(browser_type_launch_args):
+    import os
+    is_ci = os.getenv("CI", "false") == "true"
     return {
         **browser_type_launch_args,
-        "headless": False,
-        "slow_mo": 500
+        "headless": is_ci,
+        "slow_mo": 0 if is_ci else 500
     }
 
 @pytest.fixture(scope="session")
