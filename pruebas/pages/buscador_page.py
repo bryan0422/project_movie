@@ -10,13 +10,13 @@ class BuscadorPage(BasePage):
 
     def buscar_producto(self, producto, base_url):
         self.navegar(f"{base_url}/#/")
-        self.find(self.search_container).click()
-        self.find(self.buscador).fill(producto)
-        self.find(self.buscador).press("Enter")
+        self.click(self.search_container)
+        self.fill(self.buscador, producto)
+        self.press(self.buscador, "Enter")
         
 
     def resultados(self):
         return self.find(self.resultado)
 
     def abrir_resultado(self):
-        self.find(self.resultado).click()
+        self.click(self.resultado)

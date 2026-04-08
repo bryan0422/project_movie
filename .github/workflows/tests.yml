@@ -25,6 +25,9 @@ jobs:
         run: playwright install chromium
 
       - name: Correr pruebas
+        env: 
+          STREMIO_EMAIL: ${{ secrets.STREMIO_EMAIL}}
+          STREMIO_PASSWORD: ${{ secrets.STREMIO_PASSWORD}}
         run: pytest
 
       - name: Subir reporte Allure

@@ -4,3 +4,5 @@ pytest-html
 pytest-metadata
 allure-pytest
 pytest-xdist
+python-dotenv
+
