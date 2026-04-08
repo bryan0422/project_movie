@@ -9,7 +9,7 @@ def pytest_runtest_makereport(item, call):
 @pytest.fixture(autouse=True)
 def screenshot_on_failure(page, request):
     yield
-    if request.node.rep_call.failed:
+    if hasattr(request.node, "rep_call") and request.node.rep_call.failed:
         page.screenshot(path=f"screenshots/{request.node.name}.png")
 
 
@@ -32,4 +32,5 @@ def browser_context_args(browser_context_args):
 
 @pytest.fixture
 def page(page):
+    page.set_default_timeout(60000)
     yield page

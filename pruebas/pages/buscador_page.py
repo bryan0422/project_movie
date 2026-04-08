@@ -13,7 +13,7 @@ class BuscadorPage(BasePage):
         self.find(self.search_container).click()
         self.find(self.buscador).fill(producto)
         self.find(self.buscador).press("Enter")
-        self.page.wait_for_load_state("networkidle")
+        
 
     def resultados(self):
         return self.find(self.resultado)

@@ -8,5 +8,5 @@ class BasePage:
     
     def navegar(self, url):
         self.page.goto(url)
-        self.page.wait_for_load_state("networkidle")
+        self.page.wait_for_load_state("domcontentloaded")
         

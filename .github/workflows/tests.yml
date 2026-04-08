@@ -27,12 +27,12 @@ jobs:
       - name: Correr pruebas
         run: pytest
 
-      - name: Subir reporte HTML
+      - name: Subir reporte Allure
         if: always()
         uses: actions/upload-artifact@v4
         with:
-          name: reporte-html
-          path: reports/reporte.html
+          name: allure-results
+          path: reports/allure-results
 
       - name: Subir screenshots
         if: failure()
