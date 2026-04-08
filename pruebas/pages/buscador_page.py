@@ -1,11 +1,12 @@
 from pages.base_page import BasePage
-from data.peliculas import ID_IMDB, TITULO
-
 
 class BuscadorPage(BasePage):
     search_container = "div[class*='search-input']"
     buscador = 'input[placeholder="Search or paste link"]'
-    resultado = f"#{ID_IMDB}"
+    
+    def __init__(self, page, id_imdb):
+        super().__init__(page)
+        self.resultado = f"#{id_imdb}"
 
     def buscar_producto(self, producto, base_url):
         self.navegar(f"{base_url}/#/")
