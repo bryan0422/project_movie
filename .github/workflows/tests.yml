@@ -6,9 +6,6 @@ on:
   pull_request:
     branches: [main]
 
-env:
-  FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
-
 permissions:
   contents: write
   pages: write
@@ -17,6 +14,12 @@ permissions:
 jobs:
   test:
     runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        browser: [chromium, firefox, webkit]
+    container:
+      image: mcr.microsoft.com/playwright/python:v1.51.0-noble
     steps:
       - uses: actions/checkout@v4
 
@@ -26,17 +29,42 @@ jobs:
       - name: Instalar dependencias
         run: pip install -r requirements.txt
 
-      - name: Instalar browsers
-        run: playwright install chromium
-
       - name: Correr pruebas
         env:
           STREMIO_EMAIL: ${{ secrets.STREMIO_EMAIL }}
           STREMIO_PASSWORD: ${{ secrets.STREMIO_PASSWORD }}
-        run: pytest
+          CI: "true"
+        run: pytest --override-ini="addopts=--browser ${{ matrix.browser }} --base-url https://web.stremio.com --alluredir=reports/allure-results -n auto"
+
+      - name: Subir screenshots
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: screenshots-${{ matrix.browser }}
+          path: screenshots/
+
+      - name: Subir resultados Allure
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: allure-results-${{ matrix.browser }}
+          path: reports/allure-results
+
+  report:
+    needs: test
+    runs-on: ubuntu-latest
+    if: always()
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Descargar todos los resultados Allure
+        uses: actions/download-artifact@v4
+        with:
+          pattern: allure-results-*
+          path: reports/allure-results
+          merge-multiple: true
 
       - name: Instalar Allure CLI
-        if: always()
         run: |
           curl -o allure.tgz -L https://github.com/allure-framework/allure2/releases/download/2.27.0/allure-2.27.0.tgz
           tar -zxvf allure.tgz
@@ -44,24 +72,15 @@ jobs:
           sudo ln -s /opt/allure/bin/allure /usr/local/bin/allure
 
       - name: Generar reporte Allure
-        if: always()
         run: allure generate reports/allure-results -o reports/allure-report --clean
 
-      - name: Subir screenshots
-        if: failure()
-        uses: actions/upload-artifact@v4
-        with:
-          name: screenshots
-          path: screenshots/
-
       - name: Subir reporte como artifact de Pages
-        if: always()
         uses: actions/upload-pages-artifact@v3
         with:
           path: reports/allure-report
 
   deploy:
-    needs: test
+    needs: report
     runs-on: ubuntu-latest
     if: always()
     environment:
