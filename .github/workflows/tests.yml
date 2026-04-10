@@ -9,6 +9,11 @@ on:
 env:
   FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
 
+permissions:
+  contents: write
+  pages: write
+  id-token: write
+
 jobs:
   test:
     runs-on: ubuntu-latest
@@ -25,17 +30,22 @@ jobs:
         run: playwright install chromium
 
       - name: Correr pruebas
-        env: 
+        env:
           STREMIO_EMAIL: ${{ secrets.STREMIO_EMAIL }}
           STREMIO_PASSWORD: ${{ secrets.STREMIO_PASSWORD }}
         run: pytest
 
-      - name: Subir reporte Allure
+      - name: Instalar Allure CLI
         if: always()
-        uses: actions/upload-artifact@v4
-        with:
-          name: allure-results
-          path: reports/allure-results
+        run: |
+          curl -o allure.tgz -L https://github.com/allure-framework/allure2/releases/download/2.27.0/allure-2.27.0.tgz
+          tar -zxvf allure.tgz
+          sudo mv allure-2.27.0 /opt/allure
+          sudo ln -s /opt/allure/bin/allure /usr/local/bin/allure
+
+      - name: Generar reporte Allure
+        if: always()
+        run: allure generate reports/allure-results -o reports/allure-report --clean
 
       - name: Subir screenshots
         if: failure()
@@ -43,3 +53,21 @@ jobs:
         with:
           name: screenshots
           path: screenshots/
+
+      - name: Subir reporte como artifact de Pages
+        if: always()
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: reports/allure-report
+
+  deploy:
+    needs: test
+    runs-on: ubuntu-latest
+    if: always()
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4
