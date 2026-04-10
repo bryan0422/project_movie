@@ -11,7 +11,7 @@ def auth_file(tmp_path_factory, browser):
 
     login = LoginPage(page)
     login.login(os.getenv("STREMIO_EMAIL"), os.getenv("STREMIO_PASSWORD"))
-    page.wait_for_selector("//div[@title = 'Popular - Movie']", timeout=120000)
+    page.wait_for_selector("div[class*='search-input']", timeout=120000)
 
     path = tmp_path_factory.mktemp("auth") / "auth.json"
     context.storage_state(path=str(path))
