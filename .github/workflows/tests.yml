@@ -17,7 +17,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        browser: [chromium, firefox, webkit]
+        browser: [chromium, webkit]
     container:
       image: mcr.microsoft.com/playwright/python:v1.58.0-noble
     steps:

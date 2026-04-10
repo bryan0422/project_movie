@@ -5,7 +5,7 @@ class LoginPage(BasePage):
     email = "//input[@placeholder='E-mail']"
     password = "//input[@placeholder='Password']"
     boton_login = "//*[contains(text(), 'Log in')]"
-    msg = "div[class*='search-input']"
+    msg = "//div[@title = 'Popular - Movie']"
     
     def login(self, email, password):
         self.navegar(self.url)
