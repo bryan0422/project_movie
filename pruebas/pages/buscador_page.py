@@ -8,11 +8,17 @@ class BuscadorPage(BasePage):
         super().__init__(page)
         self.resultado = f"#{id_imdb}"
 
-    def buscar_producto(self, producto, base_url):
+    def ir_al_home(self, base_url):
         self.navegar(f"{base_url}/#/")
+
+    def buscar(self, producto):
         self.click(self.search_container)
         self.fill(self.buscador, producto)
         self.press(self.buscador, "Enter")
+
+    def buscar_producto(self, producto, base_url):
+        self.ir_al_home(base_url)
+        self.buscar(producto)
         
 
     def resultados(self):

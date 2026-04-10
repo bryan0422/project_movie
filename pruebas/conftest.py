@@ -1,4 +1,7 @@
 import pytest
+import os
+from dotenv import load_dotenv
+load_dotenv()
 
 @pytest.hookimpl(tryfirst=True, hookwrapper=True)
 def pytest_runtest_makereport(item, call):
@@ -15,7 +18,6 @@ def screenshot_on_failure(page, request):
 
 @pytest.fixture(scope="session")
 def browser_type_launch_args(browser_type_launch_args):
-    import os
     is_ci = os.getenv("CI", "false") == "true"
     return {
         **browser_type_launch_args,
@@ -23,12 +25,14 @@ def browser_type_launch_args(browser_type_launch_args):
         "slow_mo": 0 if is_ci else 500
     }
 
-@pytest.fixture(scope="session")
-def browser_context_args(browser_context_args):
-    return {
-        **browser_context_args,
-        "viewport": {"width": 1300, "height": 800},
-    }
+
+@pytest.fixture
+def browser_context_args(browser_context_args, request):
+    args = {**browser_context_args, "viewport": {"width": 1300, "height": 800}}
+    if request.node.get_closest_marker("authenticated"):
+        auth_file = request.getfixturevalue("auth_file")
+        args["storage_state"] = str(auth_file)
+    return args
 
 @pytest.fixture
 def page(page):
