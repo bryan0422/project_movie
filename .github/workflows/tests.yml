@@ -34,6 +34,7 @@ jobs:
           STREMIO_EMAIL: ${{ secrets.STREMIO_EMAIL }}
           STREMIO_PASSWORD: ${{ secrets.STREMIO_PASSWORD }}
           CI: "true"
+          HOME: /root
         run: pytest --override-ini="addopts=--browser ${{ matrix.browser }} --base-url https://web.stremio.com --alluredir=reports/allure-results -n auto"
 
       - name: Subir screenshots
